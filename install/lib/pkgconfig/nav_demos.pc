@@ -1,0 +1,8 @@
+prefix=/home/hanwen/hw_ws/install
+
+Name: nav_demos
+Description: Description of nav_demos
+Version: 0.0.1
+Cflags: 
+Libs: -L/home/hanwen/hw_ws/install/lib 
+Requires: 

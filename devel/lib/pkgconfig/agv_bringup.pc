@@ -1,0 +1,8 @@
+prefix=/home/hanwen/hw_ws/devel
+
+Name: agv_bringup
+Description: Description of agv_bringup
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/hanwen/hw_ws/devel/lib 
+Requires: 

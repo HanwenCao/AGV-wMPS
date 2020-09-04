@@ -1,0 +1,26 @@
+<launch>
+    <param name="/use_sim_time" value="false" />
+	
+	<!-- Load the URDF/Xacro model of our robot -->
+        <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find smartcar_description)/urdf/smartcar.urdf.xacro'" />
+	<arg name="gui" default="false" />
+
+	<param name="robot_description" command="$(arg urdf_file)" />
+	<param name="use_gui" value="$(arg gui)"/>
+
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+	</node>
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
+              <param name="publish_frequency" type="double" value="30.0" />	  
+        </node>
+    
+    <!--node pkg="tf" type="static_transform_publisher" name="tmac_base_link_broadcaster" args="-0.741 2.959 -1.754 1.577 0.090 -1.562 /tmac /base_link 100" /-->
+    <!--node pkg="tf" type="static_transform_publisher" name="fake_odom_broadcaster" args="0 0 0 0 0 0 /odom /base_footprint 100" /-->
+    <node pkg="tf" type="static_transform_publisher" name="base_footprint_broadcaster" args="0 0 0 0 0 0 /base_footprint /base_link 100" />
+
+    <!--node pkg="tf" type="static_transform_publisher" name="map_odom"  args="0.25 0.225 0 0 0 0 /map /odom 100" /-->
+    <!--node name="rviz" pkg="rviz" type="rviz" args="-d $(find smartcar_description)/urdf.rviz" /-->
+    
+
+</launch>
+

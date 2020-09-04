@@ -1,0 +1,11 @@
+<launch>
+
+  <include file="$(find rplidar_ros)/launch/rplidar.launch"/>
+
+  <include file="$(find smartcar_description)/launch/smartcar_display.rviz.launch"/>
+
+  <include file="$(find rf2o_laser_odometry)/launch/rf2o_laser_odometry.launch"/>
+
+
+
+</launch>

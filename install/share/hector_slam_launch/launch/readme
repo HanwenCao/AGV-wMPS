@@ -1,0 +1,2 @@
+Currently, I use the move_base under turtlebot_navigation. In the future, I may need to change it, especially change the radius of the robot in costap_2d.
+I created the new launch file called vav_mapping.launch  

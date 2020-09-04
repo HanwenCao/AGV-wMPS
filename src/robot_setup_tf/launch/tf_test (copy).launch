@@ -1,0 +1,10 @@
+<launch>
+
+    <!-- node -->
+
+	<node pkg="tf" type="static_transform_publisher" name="base_imu"  args="0 0 0 4.712388981 0 0 /base_link /imu 200" />
+
+	<node pkg="tf" type="static_transform_publisher" name="base_laser"  args="-1.3829 0.4351 0 0 0 0  /imu /laser 200" />
+
+
+</launch>

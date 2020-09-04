@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="agv_a4">
+
+  <xacro:arg name="robot_name" default="agv_a4" />
+  <property name="robot_name" value="$(arg robot_name)" />
+  <property name="M_PI" value="3.1415926535897931" />
+
+  <!-- Chassis Definitions -->
+  <property name="dx" value="1.500" />
+  <property name="dy" value="0.893" />
+  <property name="dz" value="1.294" />
+  <property name="mass" value="1.0" />
+  <property name="inertiaOrigin" value="0.691704 0.007937 0.675" />
+
+  <!-- Lift and Fork Definitions -->
+  <property name="lift_xyz" value="-0.194 0 0.2"/>
+  <property name="lift_rpy" value="0 0 0"/>
+  <property name="lift_lower_limit" value="0.05"/>
+  <property name="lift_upper_limit" value="1.6"/>
+  <property name="lift_height" value="0.48"/>
+  <property name="lift_mass" value="0.05"/>
+  <property name="fork_mass" value="0.025"/>
+  <property name="fork_length" value="1.4"/>
+  <property name="fork_width" value="0.145"/>
+  <property name="fork_height" value="0.060"/>
+  <property name="fork_seperation" value="0.560"/>
+  <property name="lift_pos_tolerance" value="0.01"/>
+  <property name="lift_speed_max" value="0.2"/>
+  <property name="lift_speed_min" value="-0.2"/>
+  
+  <!-- Wheel Definitions -->
+  <property name="actuatedWheelRadius" value="0.15" />
+  <property name="encoderWheelRadius" value="0.15" />
+  <property name="actuatedWheelLength" value="0.15" />
+  <property name="encoderWheelLength" value="0.15" />
+  <property name="encoderWheelSeparation" value="0.764" />
+  <property name="actuatedWheelXPos" value="1.204" />
+  
+  <!-- Dynamics Definitions -->
+  <property name="wheelAcceleration" value="10.0" />
+  <property name="wheelDeceleration" value="10.0" />
+  <property name="wheelSpeedTolerance" value="0.1" />
+  <property name="steeringSpeed" value="0" /> <!-- 1.57 -->
+  <property name="steeringAngleTolerance" value="0.02" />
+  <property name="drivingSpeedMax" value="1.6" />
+  <property name="drivingSpeedMin" value="-1.0" />
+  
+  <!-- Mesh Path -->
+  <property name="meshes" value="package://agve_description/meshes/agv_a4" />
+  
+  <!-- Include AGV Base -->
+  <xacro:include filename="materials.xacro" />
+  <xacro:include filename="inertia_tensors.xacro"/>
+  <xacro:include filename="tricycle_chassis.xacro"/>
+  <xacro:include filename="wheel.xacro"/>
+  <xacro:include filename="wheel_actuated.xacro"/>
+  <xacro:include filename="lifter_std.xacro"/>
+  
+  <!-- Include AGV Sensor -->
+  <xacro:include filename="$(find agve_description)/urdf/sensors/sick_s300.xacro"/>
+  <xacro:include filename="$(find agve_description)/urdf/sensors/sim_imu.xacro"/>
+  
+  <!-- Include Gazebo HW Plugin -->
+  <xacro:include filename="$(find agve_gazebo)/plugins/agv_a4/agv_hw_sim_plugin.gazebo.xacro"/>
+  
+  <!-- base_link -->
+  <link name="base_link"/>
+  <property name="base_link_offset" value="0.15" />
+
+
+  <!-- base_footprint -->
+  <link name="base_footprint"/>
+  <property name="parent" value="base_footprint" />
+
+  <joint name="base_footprint_joint" type="fixed">
+    <origin xyz="0 0 ${base_link_offset}" rpy="0 0 0" />
+    <child link="base_link" />
+    <parent link="base_footprint"/>
+  </joint>
+
+  <!-- Chassis -->
+  <xacro:tricycle_chassis name="chassis" parent="${parent}" xyz="0 0 0" rpy="0 0 0"  meshes="${meshes}"
+    dx="${dx}" dy="${dy}" dz="${dz}" mass="${mass}" origin="${inertiaOrigin}" />
+
+  <!-- Wheels -->
+  <xacro:wheel name="right"  parent="${parent}"  xyz="0.0 ${encoderWheelSeparation/2} ${encoderWheelRadius}" rpy="${-M_PI/2} 0 0"
+    radius="${encoderWheelRadius}" length="${encoderWheelLength}" meshes="${meshes}"/>
+  <xacro:wheel name="left"   parent="${parent}"  xyz="0.0 -${encoderWheelSeparation/2} ${encoderWheelRadius}" rpy="${-M_PI/2} 0 0"
+    radius="${encoderWheelRadius}" length="${encoderWheelLength}" meshes="${meshes}"/>
+  <xacro:wheel_actuated name="front"  parent="${parent}"  xyz="${actuatedWheelXPos}  0.0   ${actuatedWheelRadius}" rpy="${-M_PI/2} 0 0"
+    radius="${actuatedWheelRadius}" length="${actuatedWheelLength}" meshes="${meshes}"/>
+  
+  <!-- Forks -->
+  <xacro:lifter_std name="lifter"
+  parent="${parent}" xyz="${lift_xyz}" rpy="${lift_rpy}"
+  lower_limit="${lift_lower_limit}" upper_limit="${lift_upper_limit}"
+  fork_length="${fork_length}" fork_width="${fork_width}" fork_height="${fork_height}" fork_seperation="${fork_seperation}"
+  lift_height="${lift_height}"
+  fork_mass="${fork_mass}" lift_mass="${lift_mass}" />
+
+  <!-- AGV simulated Hardware Controller Plugin -->
+  <xacro:agv_hw_sim_ctrl base_frame="base_footprint"
+          actuatedWheelDiameter="${2*actuatedWheelRadius}"
+          encoderWheelDiameter="${2*encoderWheelRadius}"
+          encoderWheelSeparation="${encoderWheelSeparation}"
+          wheelAcceleration="${wheelAcceleration}"
+          wheelDeceleration="${wheelDeceleration}"
+          wheelSpeedTolerance="${wheelSpeedTolerance}"
+          steeringSpeed="${steeringSpeed}"
+          steeringAngleTolerance="${steeringAngleTolerance}"
+          drivingSpeedMin="${drivingSpeedMin}"
+          drivingSpeedMax="${drivingSpeedMax}"
+          lift_lower_limit="${lift_lower_limit}"
+          lift_upper_limit="${lift_upper_limit}"
+          fork_length="${fork_length}"
+          fork_width="${fork_width}"
+          fork_height="${lift_height}"
+          fork_seperation="${fork_seperation}"
+          lift_speed_max="${lift_speed_max}"
+          lift_speed_min="${lift_speed_min}"
+          lift_position_tolerance="${lift_pos_tolerance}"
+  />
+  
+  <!-- Sensors -->
+  <!-- IMU -> Currently not used - only relevant for robot_pose_ekf
+  <xacro:sim_imu_sensor name="sim_imu" prefix="${robot_name}" parent="${parent}" update_rate="100" ros_topic="imu">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:sim_imu_sensor>-->
+
+  <xacro:sick_s300 name="s300_rear_c" parent="${parent}" ros_topic="s300_rear_c/scan" update_rate="30" ray_count="100" range_min="0.08" range_max="30.0" min_angle="-45" max_angle="45" >
+    <origin xyz="0 0 ${base_link_offset}" rpy="0 0 ${M_PI}" />
+  </xacro:sick_s300>
+
+  <xacro:sick_s300 name="s300_front_l" parent="${parent}" ros_topic="s300_front_l/scan" update_rate="30" ray_count="100" range_min="0.08" range_max="30.0" min_angle="-134" max_angle="134" >
+    <origin xyz="${1.445} ${0.465}  ${base_link_offset}" rpy="0 0 ${M_PI/4}" />
+  </xacro:sick_s300>
+
+  <xacro:sick_s300 name="s300_front_r" parent="${parent}" ros_topic="s300_front_r/scan" update_rate="30" ray_count="100" range_min="0.08" range_max="30.0" min_angle="-134" max_angle="134" >
+    <origin xyz="${1.445} ${-0.465} ${base_link_offset}" rpy="0 0 ${-M_PI/4}" />
+  </xacro:sick_s300>
+
+</robot>

@@ -1,0 +1,193 @@
+#include <ros/ros.h>
+#include <tf/transform_broadcaster.h>
+#include <nav_msgs/Odometry.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <cstdlib>
+#include <Eigen/Eigen>
+#include <stdlib.h>
+#include <Eigen/Geometry>
+#include <Eigen/Core>
+#include <Eigen/Dense>
+#include <math.h>
+#include <sensor_msgs/LaserScan.h>
+#define DEG2RAD(x) ((x)*M_PI/180.)
+
+using namespace std;
+using namespace Eigen;
+//int __NaN=0xFFC00000,__Infinity=0x7F800000,__Neg_Infinity=0xFF800000;
+//const float NaN=*((float *)&__NaN),Infinity=*((float *)&__Infinity),Neg_Infinity=*((float *)&__Neg_Infinity); 
+string Trim(string& str){
+	//str.find_first_not_of(" \t\r\n"),在字符串str中从索引0开始，返回首次不匹配"\t\r\n"的位置
+	str.erase(0, str.find_first_not_of(" \t\r\n"));
+	str.erase(str.find_last_not_of(" \t\r\n") + 1);
+	return str;
+}
+
+
+int main(int argc, char** argv){
+  ros::init(argc, argv, "odometry_scan_publisher");
+  ros::NodeHandle n;
+  ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);//topic
+  ros::Publisher scan_pub = n.advertise<sensor_msgs::LaserScan>("scan", 50);
+
+//laser
+  unsigned int num_readings = 180;
+  double laser_frequency = 40;
+  float ranges[num_readings];
+  float intensities[num_readings];
+
+  tf::TransformBroadcaster odom_broadcaster;
+  double x = 0;
+  double y = 0;
+  double z = 0;
+  double xth = 0;
+  double yth = 0;
+  double zth = 0;
+
+  ros::Time current_time, last_time;
+  current_time = ros::Time::now();
+  last_time = ros::Time::now();
+
+  ros::Rate r(1.0);
+  ifstream fin("/home/exbot/catkin_ws/src/robot_setup_tf/src/TMAC.csv"); //打开文件流操作
+  ifstream fin2("/home/exbot/catkin_ws/src/robot_setup_tf/src/data.txt"); //打开文件流操作
+  string line, line2;
+
+
+  while(n.ok()){
+
+    if(getline(fin2, line2))
+    {
+      cout << "原始字符串：" << line2 << endl; //整行输出
+      istringstream sin(line2); //将整行字符串line读入到字符串流istringstream中
+      vector<string> fields; //声明一个字符串向量
+      string field;
+      while (getline(sin, field, ' ')) //将字符串流sin中的字符读入到field字符串中，以空格为分隔符
+      {
+	  fields.push_back(field); //将刚刚读取的字符串添加到向量fields中
+      }
+      cout << "扫面数" << fields.size() << endl;
+      for(unsigned int i=90 , j=0; i<270; i++,j++)
+      {
+	string range = Trim(fields[i]);
+	if(range == "inf")
+	{
+	  ranges[j] = std::numeric_limits<float>::infinity();
+	  intensities[j] = 0.0;
+	}
+	else
+	{
+	  ranges[j] = atof(range.c_str());
+	  intensities[j] = 47.0;
+	}
+      }
+      cout << "ranges :";
+     for(unsigned int i=0; i<num_readings; i++)
+     {
+       cout << ranges[i] << " ";
+    }
+     cout <<endl;
+  }
+   else
+         cout<<"open failed"<<endl;
+
+
+
+    if (getline(fin, line))   //整行读取，换行符“\n”区分，遇到文件尾标志eof终止读取
+        {
+            //cout << "原始字符串：" << line << endl; //整行输出
+            istringstream sin(line); //将整行字符串line读入到字符串流istringstream中
+            vector<string> fields; //声明一个字符串向量
+            string field;
+            while (getline(sin, field, ',')) //将字符串流sin中的字符读入到field字符串中，以逗号为分隔符
+            {
+                fields.push_back(field); //将刚刚读取的字符串添加到向量fields中
+            }
+            string name = Trim(fields[0]); //清除掉向量fields中第一个元素的无效字符，并赋值给变量name
+            string xx = Trim(fields[1]);
+            string yy = Trim(fields[2]);
+            string zz = Trim(fields[3]);
+            string Rx = Trim(fields[4]);
+            string Ry = Trim(fields[5]);
+            string Rz = Trim(fields[6]);
+
+            x = atof(xx.c_str())/1000;
+            y = atof(yy.c_str())/1000;
+            z = atof(zz.c_str())/1000;
+            xth = M_PI*atof(Rx.c_str())/180;
+            yth = M_PI*atof(Ry.c_str())/180;
+            zth = M_PI*atof(Rz.c_str())/180;
+
+            cout << "base_link_odom：" << name << "\t" << x << "\t" << y << "\t" << z << "\t" << xth << "\t" << yth << "\t" << zth << endl;
+        }
+    else
+         cout<<"open failed"<<endl;
+    
+    ros::spinOnce();               // check for incoming messages
+    current_time = ros::Time::now();
+
+
+    
+    //since all odometry is 6DOF we'll need a quaternion created from yaw
+    geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromRollPitchYaw(xth,yth,zth);
+
+    //first, we'll publish the transform over tf
+    geometry_msgs::TransformStamped odom_trans;
+    odom_trans.header.stamp = current_time;
+    odom_trans.header.frame_id = "odom";
+    odom_trans.child_frame_id = "base_link";
+
+    odom_trans.transform.translation.x = x;
+    odom_trans.transform.translation.y = y;
+    odom_trans.transform.translation.z = z;
+    odom_trans.transform.rotation = odom_quat;
+
+    //send the transform
+    odom_broadcaster.sendTransform(odom_trans);
+
+    //next, we'll publish the odometry message over ROS
+    nav_msgs::Odometry odom;
+    odom.header.stamp = current_time;
+    odom.header.frame_id = "odom";
+
+    //set the position
+    odom.pose.pose.position.x = x;
+    odom.pose.pose.position.y = y;
+    odom.pose.pose.position.z = z;
+    odom.pose.pose.orientation = odom_quat;
+
+    //cout << odom_quat.x<<endl;
+
+    //set the velocity
+    odom.child_frame_id = "base_link";
+    odom.twist.twist.linear.x = 0;
+    odom.twist.twist.linear.y = 0;
+    odom.twist.twist.angular.z = 0;
+    
+    //populate the LaserScan message
+    sensor_msgs::LaserScan scan;
+    scan.header.stamp = current_time;
+    scan.header.frame_id = "laser_frame";
+    scan.angle_min = DEG2RAD(90.0f);
+    scan.angle_max = DEG2RAD(270.0f);
+    scan.angle_increment = M_PI / num_readings;
+    scan.time_increment = (1 / laser_frequency) / (num_readings);
+    scan.range_min = 0.0;
+    scan.range_max = 20.0;
+    scan.ranges.resize(num_readings);
+    scan.intensities.resize(num_readings);
+    for(unsigned int i = 0; i < num_readings; ++i){
+      scan.ranges[i] = ranges[i];
+      scan.intensities[i] = intensities[i];
+    }
+    //publish the message
+    odom_pub.publish(odom);
+    scan_pub.publish(scan);
+    last_time = current_time;
+    r.sleep();
+  }
+}

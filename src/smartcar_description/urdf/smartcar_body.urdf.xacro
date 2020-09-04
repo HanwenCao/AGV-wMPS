@@ -1,0 +1,581 @@
+<?xml version="1.0"?>
+<robot name="smartcar" xmlns:xacro="http://ros.org/wiki/xacro">
+  <property name="M_PI" value="3.14159"/>
+
+  <!-- Macro for SmartCar body. Including Gazebo extensions, but does not include Kinect -->
+  <include filename="$(find smartcar_description)/urdf/gazebo.urdf.xacro"/>
+
+  <property name="base_x" value="0.33" />
+  <property name="base_y" value="0.33" />
+
+  <xacro:macro name="smartcar_body">
+
+
+	<link name="base_link">
+	<inertial>
+      <origin xyz="0 0 0.45"/>
+      <mass value="100.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="1.6 1 0.6"/>
+      </geometry>
+	  <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <material name="gray">
+	  <color rgba="0.3 0.3 .5 1"/>
+      </material>
+   </visual>
+   <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <geometry>
+        <box size="1.6 1 0.6" />
+      </geometry>
+    </collision>
+  </link>
+
+ <link name="left_leg1">
+	<inertial>
+      <origin  xyz="0.7 0.5 0.15"/>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".2" radius="0.02"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="left_leg1_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="base_link"/>
+    <child link="left_leg1"/>
+    <origin rpy="0 1.57075 1.57075" xyz="0.7 0.5 0.15"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+ <link name="left_1_wheel">
+    <inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".1" radius="0.15"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="left_1_wheel_joint" type="continuous">
+    <axis xyz="0 0 1"/>
+    <parent link="left_leg1"/>
+    <child link="left_1_wheel"/>
+    <origin rpy="0 0 0" xyz="0 0 0.1"/>
+    <limit effort="100" velocity="100"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+ <link name="left_leg2">
+	<inertial>
+      <origin  xyz="0 0.5 0.15"/>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".2" radius="0.02"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="left_leg2_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="base_link"/>
+    <child link="left_leg2"/>
+    <origin rpy="0 1.57075 1.57075" xyz="0 0.5 0.15"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+ <link name="left_2_wheel">
+    <inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".1" radius="0.15"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="left_2_wheel_joint" type="continuous">
+    <axis xyz="0 0 1"/>
+    <parent link="left_leg2"/>
+    <child link="left_2_wheel"/>
+    <origin rpy="0 0 0" xyz="0 0 0.1"/>
+    <limit effort="100" velocity="100"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+  <link name="left_leg3">
+	<inertial>
+      <origin  xyz="-0.7 0.5 0.15"/>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".2" radius="0.02"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="left_leg3_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="base_link"/>
+    <child link="left_leg3"/>
+    <origin rpy="0 1.57075 1.57075" xyz="-0.7 0.5 0.15"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+ <link name="left_3_wheel">
+    <inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".1" radius="0.15"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="left_3_wheel_joint" type="continuous">
+    <axis xyz="0 0 1"/>
+    <parent link="left_leg3"/>
+    <child link="left_3_wheel"/>
+    <origin rpy="0 0 0" xyz="0 0 0.1"/>
+    <limit effort="100" velocity="100"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+  <link name="right_leg1">
+	<inertial>
+      <origin  xyz="0.7 -0.5 0.15"/>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".2" radius="0.02"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="right_leg1_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="base_link"/>
+    <child link="right_leg1"/>
+    <origin rpy="0 1.57075 1.57075" xyz="0.7 -0.5 0.15"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+ <link name="right_1_wheel">
+    <inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".1" radius="0.15"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="right_1_wheel_joint" type="continuous">
+    <axis xyz="0 0 1"/>
+    <parent link="right_leg1"/>
+    <child link="right_1_wheel"/>
+    <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+    <limit effort="100" velocity="100"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+ <link name="right_leg2">
+	<inertial>
+      <origin  xyz="0 -0.5 0.15"/>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".2" radius="0.02"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="right_leg2_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="base_link"/>
+    <child link="right_leg2"/>
+    <origin rpy="0 1.57075 1.57075" xyz="0 -0.5 0.15"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+ <link name="right_2_wheel">
+    <inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".1" radius="0.15"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="right_2_wheel_joint" type="continuous">
+    <axis xyz="0 0 1"/>
+    <parent link="right_leg2"/>
+    <child link="right_2_wheel"/>
+    <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+    <limit effort="100" velocity="100"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+  <link name="right_leg3">
+	<inertial>
+      <origin  xyz="-0.7 -0.5 0.15"/>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".2" radius="0.02"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="right_leg3_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="base_link"/>
+    <child link="right_leg3"/>
+    <origin rpy="0 1.57075 1.57075" xyz="-0.7 -0.5 0.15"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+ <link name="right_3_wheel">
+    <inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length=".1" radius="0.15"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="right_3_wheel_joint" type="continuous">
+    <axis xyz="0 0 1"/>
+    <parent link="right_leg3"/>
+    <child link="right_3_wheel"/>
+    <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+    <limit effort="100" velocity="100"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+  
+  <link name="maozi">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="1.8 1.8 0.04"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.3 0.3 0.5 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="maozi_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="base_link"/>
+    <child link="maozi"/>
+    <origin rpy="0 0 0" xyz="0.1 0 0.77"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+
+  <link name="left_hand">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length="1.8" radius="0.02"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="left_hand_joint" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="1.57075" velocity="0.5"/>
+    <parent link="maozi"/>
+    <child link="left_hand"/>
+    <origin rpy="0 -1.57075 0" xyz="0 0.9 0"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+   <link name="left_wing">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.04 0.69 1.8"/>
+      </geometry>
+      <material name="gg">
+        <color rgba="0.2 0.2 0.3 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="left_wing_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="left_hand"/>
+    <child link="left_wing"/>
+    <origin rpy="0 0 0" xyz="0 0.345 0"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+  <link name="right_hand">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length="1.8" radius="0.02"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="right_hand_joint" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="1.57075" velocity="0.5"/>
+    <parent link="maozi"/>
+    <child link="right_hand"/>
+    <origin rpy="0 1.57075 0" xyz="0 -0.9 0"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+    <link name="right_wing">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.04 0.69 1.8"/>
+      </geometry>
+      <material name="gg">
+      </material>
+    </visual>
+  </link>
+ <joint name="right_wing_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="right_hand"/>
+    <child link="right_wing"/>
+    <origin rpy="0 0 0" xyz="0 -0.345 0"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+  <link name="front_hand">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length="1.8" radius="0.02"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="front_hand_joint" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="1.57075" velocity="0.5"/>
+    <parent link="maozi"/>
+    <child link="front_hand"/>
+    <origin rpy="0 1.57075 1.57075" xyz="0.9 0 0"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+    <link name="front_wing">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.04 0.69 1.8"/>
+      </geometry>
+      <material name="gg">
+      </material>
+    </visual>
+  </link>
+ <joint name="front_wing_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="front_hand"/>
+    <child link="front_wing"/>
+    <origin rpy="0 0 0" xyz="0 -0.345 0"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+  <link name="gan">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length="0.5" radius="0.02"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="gan_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="maozi"/>
+    <child link="gan"/>
+    <origin rpy="0 0 0" xyz="0.5 0 0.25"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+   <link name="radar">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length="0.04" radius="0.2"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="radar_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="gan"/>
+    <child link="radar"/>
+    <origin rpy="0 0 0" xyz="0 0 0.25"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+ <link name="wei">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder length="1.145" radius="0.02"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="wei_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="maozi"/>
+    <child link="wei"/>
+    <origin rpy="0 0 0" xyz="-0.9 0 0.5725"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+ <link name="wei2">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.079 1 0.2"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.3 0.3 0.5 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="wei2_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="maozi"/>
+    <child link="wei2"/>
+    <origin rpy="0 0 0" xyz="-0.9395 0 -0.08"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+  <link name="wei3">
+	<inertial>
+      <mass value="1" />
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.03"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+ <joint name="wei3_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="wei"/>
+    <child link="wei3"/>
+    <origin rpy="0 0 0" xyz="0 0 0.572"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+  </xacro:macro>
+
+</robot>
